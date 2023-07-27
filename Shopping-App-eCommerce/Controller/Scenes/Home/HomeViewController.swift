@@ -42,8 +42,17 @@ class HomeViewController: UIViewController {
             case .success(_):
                 do {
                     let productData = try JSONDecoder().decode([ProductData].self, from: response.data!)
-                    for data in productData {
-                        HomeViewController.productList.append(ProductModel(id: data.id, title: data.title, price: Float(data.price), image: data.image, rate: Float(data.rating.rate), category: data.category, description: data.description, count: data.rating.count))
+                    for (index, data) in productData.enumerated() {
+                        var imageFake = ""
+                        var titleFake = ""
+                        switch index % 10 {
+                        case 0...9:
+                            imageFake = "mens_0\(index % 10)"
+                            titleFake = "Mẫu áo \(index + 1)"
+                        default:
+                            imageFake = ""
+                        }
+                        HomeViewController.productList.append(ProductModel(id: data.id, title: data.title, price: Float(data.price), image: data.image, rate: Float(data.rating.rate), category: data.category, description: data.description, count: data.rating.count, imageFake: imageFake, titleFake: titleFake))
                         DispatchQueue.main.async {
                             self.productCollectionView.reloadData()
                         }
@@ -174,10 +183,12 @@ extension HomeViewController: UICollectionViewDataSource {
         case productCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: K.CollectionViews.bottomCollectionViewNibNameAndIdentifier, for: indexPath) as! ProductsCollectionViewCell
             let u = HomeViewController.productList[indexPath.row]
-            cell.productImageView.sd_setImage(with: URL(string: u.image!), placeholderImage: UIImage(systemName: "photo.on.rectangle.angled"))
-            cell.productNameLabel.text = u.title
+//            cell.productImageView.sd_setImage(with: URL(string: u.image!), placeholderImage: UIImage(systemName: "photo.on.rectangle.angled"))
+            cell.productImageView.image = UIImage(named: u.imageFake ?? "")
+            cell.productNameLabel.text = u.titleFake
             cell.productRateLabel.text = "★ \(u.rate!) "
-            cell.productPriceLabe.text = "$\(u.price!)"
+//            cell.productPriceLabe.text = "$\(u.price!)"
+            cell.productPriceLabe.text = "\(u.price! * 1000)VND"
             return cell
             
         default:

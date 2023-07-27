@@ -17,4 +17,6 @@ struct ProductModel {
     var description: String?
     var count: Int?
     var quantityCount: Int?
+    var imageFake: String?
+    var titleFake: String?
 }
